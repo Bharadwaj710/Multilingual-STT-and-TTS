@@ -1,4 +1,4 @@
-# Pelocal Speech-to-Text & TTS System
+# Speech-to-Text & TTS System
 
 Working demo for Pelocal: a multilingual speech-to-text web application.
 
