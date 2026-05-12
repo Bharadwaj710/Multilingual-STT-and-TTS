@@ -1,10 +1,8 @@
 # Speech-to-Text & TTS System
 
-Working demo for Pelocal: a multilingual speech-to-text web application.
+A multilingual speech-to-text web application.
 
-## Step 1: Assignment Analysis
-
-### Problem Statement
+## Problem Statement
 
 Build a web application where a user speaks in real time and the system transcribes the speech. Speech may be multilingual, for example Hindi, English, or a Hindi-English mix.
 
