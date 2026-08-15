@@ -2,9 +2,9 @@
 
 A multilingual speech-to-text web application.
 
-## Problem Statement
+## Description
 
-Build a web application where a user speaks in real time and the system transcribes the speech. Speech may be multilingual, for example Hindi, English, or a Hindi-English mix.
+Built a web application where a user speaks in real time and the system transcribes the speech. Speech may be multilingual, for example Hindi, English, or a Hindi-English mix.
 
 ### Functional Requirements
 
@@ -12,24 +12,15 @@ Build a web application where a user speaks in real time and the system transcri
 - Send audio to a backend speech-to-text service.
 - Transcribe spoken words and show text to the user.
 - Support multilingual input.
-- Prefer a self-deployed open-source speech-to-text model.
+- Used a self-deployed open-source speech-to-text model.
 
 ### Non-Functional Requirements
 
-- Low-latency enough for a demo.
+- Low-latency.
 - Simple browser UI.
-- Backend should expose a clean API.
-- Model should be practical to run locally and deploy.
-- Implementation should be recruiter-demo friendly.
+- Backend exposes a clean API.
+- Model is practical, can run locally and deploy.
 
-### Constraints
-
-- Real-time transcription is requested, but full streaming is not required for a short assignment demo.
-- Open-source STT is preferred.
-- Multilingual support is important.
-- Keep the solution practical and executable.
-
-## Step 2: Solution Breakdown
 
 ### Architecture
 
@@ -65,19 +56,7 @@ Build a web application where a user speaks in real time and the system transcri
 - MediaRecorder: native browser microphone recording without extra frontend libraries.
 - Multipart upload: simple and reliable for short audio chunks.
 
-## Step 3: Implementation Plan
-
-### MVP
-
-1. Create FastAPI backend with health check.
-2. Add `/api/transcribe` accepting audio upload.
-3. Integrate Whisper model with auto language detection.
-4. Create React UI with start/stop recording.
-5. Send 5-second chunks to backend.
-6. Append transcript chunks in UI.
-7. Add local run and deployment docs.
-
-### Enhanced Version
+### Future Enhancemens
 
 1. Add WebSocket streaming for lower latency.
 2. Add speaker/session IDs and transcript persistence.
@@ -117,18 +96,7 @@ The implementation is included in this repository:
 - Frontend recorder: `frontend/src/App.tsx`
 - Frontend styling: `frontend/src/styles.css`
 
-## Step 6: Real-Time Simplification
-
-This demo uses chunk-based processing instead of true streaming. The frontend records 5-second audio chunks and sends each chunk to the backend.
-
-This is acceptable for the assignment because:
-
-- It feels near real time for a recruiter demo.
-- It avoids WebSocket and streaming audio complexity.
-- It is easier to debug and deploy.
-- It still proves the core requirement: microphone input to multilingual transcription output.
-
-## Step 7: Improvements
+This uses chunk-based processing instead of true streaming. The frontend records 5-second audio chunks and sends each chunk to the backend.
 
 ### Performance
 
@@ -138,31 +106,6 @@ This is acceptable for the assignment because:
 - Run the model on GPU when available.
 - Keep the model loaded in memory instead of loading per request.
 - Add request queueing for concurrent users.
-
-### UI
-
-- Add live waveform visualization.
-- Add continuous merged transcript view.
-- Add download transcript button.
-- Add language confidence display toggle.
-- Add recording timer.
-
-### Scalability
-
-- Separate API and worker processes.
-- Store uploaded chunks in object storage for async processing.
-- Use Redis Queue, Celery, or Dramatiq for background jobs.
-- Add autoscaling workers for transcription-heavy traffic.
-- Add rate limiting and request size limits.
-
-### Multilingual Handling
-
-- Keep auto language detection for mixed-language input.
-- Use the language hint dropdown for better Hindi or regional-language accuracy.
-- Prefer Whisper `small` or larger for Hindi-English code-switching.
-- Add text normalization for Hindi, English, and Hinglish output.
-
-## Step 8: Run and Deploy
 
 ### Run Locally
 
