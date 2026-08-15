@@ -197,4 +197,4 @@ Open:
 ```text
 http://localhost:5173
 ```
-# Pelcol-Multilingual
+
