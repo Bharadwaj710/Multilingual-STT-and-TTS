@@ -251,7 +251,7 @@ function App() {
   return (
     <main className="page-shell">
       <section className="hero">
-        <p className="eyebrow">Pelocal AI Assignment</p>
+        <p className="eyebrow">Multilingual STT and TTS</p>
         <h1>Multilingual speech to text, chunk by chunk.</h1>
         <p className="subcopy">
           Speak naturally in English, Hindi, or a mix of both. The browser sends short audio

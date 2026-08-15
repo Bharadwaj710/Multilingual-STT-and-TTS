@@ -23,7 +23,7 @@ class TTSRequest(BaseModel):
 
 
 app = FastAPI(
-    title="Pelocal Speech-to-Text API",
+    title="Speech-to-Text API",
     version="1.0.0",
     description="Chunk-based multilingual transcription using an open-source Whisper model.",
 )
