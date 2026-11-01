@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     WHISPER_MODEL_SIZE=small \
     WHISPER_DEVICE=cpu \
     WHISPER_COMPUTE_TYPE=int8 \
-    TEMP_DIRECTORY=/tmp/pelocal-speech-api \
+    TEMP_DIRECTORY=/tmp/multilingual-speech-api \
     HF_HOME=/opt/model-cache \
     HF_HUB_CACHE=/opt/model-cache/hub \
     XDG_CACHE_HOME=/opt/model-cache
@@ -18,9 +18,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 RUN useradd --create-home --uid 10001 appuser \
-    && mkdir -p /tmp/pelocal-speech-api \
+    && mkdir -p /tmp/multilingual-speech-api \
     && mkdir -p /opt/model-cache \
-    && chown -R appuser:appuser /app /tmp/pelocal-speech-api /opt/model-cache
+    && chown -R appuser:appuser /app /tmp/multilingual-speech-api /opt/model-cache
 USER appuser
 
 EXPOSE 8000

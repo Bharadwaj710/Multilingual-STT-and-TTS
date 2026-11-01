@@ -13,12 +13,12 @@ from app.schemas.health import HealthResponse, ModelWarmupResponse, ReadinessRes
 from app.services.speech_recognition import is_model_loaded, warmup_model
 
 router = APIRouter(tags=["health"])
-logger = logging.getLogger("pelocal.stt.health")
+logger = logging.getLogger("multilingual.stt.health")
 
 
 @router.get("/", response_model=RootResponse, summary="API service information")
 def read_root() -> RootResponse:
-    return {"message": "Pelocal Speech AI API is running."}
+    return {"message": "Multilingual Speech API is running."}
 
 
 @router.get("/health", response_model=HealthResponse, summary="Liveness check")

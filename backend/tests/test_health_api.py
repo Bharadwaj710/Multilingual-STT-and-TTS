@@ -33,7 +33,7 @@ def test_warmup_returns_stable_error_when_model_load_fails(client, monkeypatch):
 
 
 def test_openapi_documents_sequence_and_request_logging(client, caplog):
-    caplog.set_level(logging.INFO, logger="pelocal.stt")
+    caplog.set_level(logging.INFO, logger="multilingual.stt")
     schema = client.get("/openapi.json").json()
     response = client.get("/health")
 

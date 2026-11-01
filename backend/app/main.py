@@ -1,4 +1,4 @@
-"""FastAPI application assembly for the self-hostable Speech AI API."""
+"""FastAPI application assembly for the self-hostable multilingual STT/TTS API."""
 
 from __future__ import annotations
 
@@ -18,10 +18,10 @@ from app.core.errors import AppError
 from app.core.logging import configure_logging
 
 configure_logging()
-logger = logging.getLogger("pelocal.stt")
+logger = logging.getLogger("multilingual.stt")
 
 app = FastAPI(
-    title="Speech AI API",
+    title="Multilingual STT/TTS API",
     version="1.0.0",
     description=(
         "Chunk-based multilingual transcription using faster-whisper and "

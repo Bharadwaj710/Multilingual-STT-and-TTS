@@ -49,7 +49,7 @@ class Settings:
             extension.lower().lstrip(".")
             for extension in _csv_setting("SUPPORTED_AUDIO_EXTENSIONS", "webm,wav,mp3,m4a,ogg,mp4,aac,flac")
         )
-        self.temp_directory = Path(os.getenv("TEMP_DIRECTORY", str(Path(tempfile.gettempdir()) / "pelocal-speech-api")))
+        self.temp_directory = Path(os.getenv("TEMP_DIRECTORY", str(Path(tempfile.gettempdir()) / "multilingual-speech-api")))
         self.tts_default_voice = os.getenv("TTS_DEFAULT_VOICE", "en-US-AvaNeural")
         self.tts_allowed_voices = frozenset(_csv_setting(
             "TTS_ALLOWED_VOICES",

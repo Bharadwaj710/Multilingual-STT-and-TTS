@@ -1,4 +1,4 @@
-const DATABASE_NAME = "pelocal-speech-history";
+const DATABASE_NAME = "multilingual-speech-history";
 const DATABASE_VERSION = 1;
 const TRANSCRIPTIONS_STORE = "transcriptions";
 const SPEECH_STORE = "speech";

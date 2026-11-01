@@ -10,7 +10,7 @@ volume.
 - **Backend container:** FastAPI/Uvicorn on `http://localhost:8000`.
 - **Frontend container:** Nginx serves the compiled React application on
   `http://localhost:5173`.
-- **Model volume:** `pelocal-whisper-model-cache` is mounted at
+- **Model volume:** `multilingual-whisper-model-cache` is mounted at
   `/opt/model-cache`. Whisper downloads its files there on the first warmup or
   transcription request and reuses them after container recreation.
 

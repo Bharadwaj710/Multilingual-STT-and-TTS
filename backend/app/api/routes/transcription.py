@@ -17,7 +17,7 @@ from app.services.speech_recognition import transcribe_audio_file
 from app.utils.file_handling import remove_file
 
 router = APIRouter(tags=["transcription"])
-logger = logging.getLogger("pelocal.stt.transcription")
+logger = logging.getLogger("multilingual.stt.transcription")
 
 
 @router.post(

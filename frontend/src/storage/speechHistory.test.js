@@ -9,7 +9,7 @@ import {
   saveTranscription,
 } from "./speechHistory";
 
-const DATABASE_NAME = "pelocal-speech-history";
+const DATABASE_NAME = "multilingual-speech-history";
 
 function deleteDatabase() {
   return new Promise((resolve, reject) => {

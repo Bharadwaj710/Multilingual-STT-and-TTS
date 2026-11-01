@@ -1,11 +1,11 @@
-# Project Technical Audit — PeLocal Multilingual Speech
+# Project Technical Audit — Multilingual Speech STT/TTS
 
 **Audit scope:** repository at Git `837a600` (working tree had a pre-existing modification to `README.md`; it was not changed).
 **Method:** recursively inspected all 15 tracked project files, followed imports from the Vite entry point and FastAPI entry point, reviewed the available Git history, and performed non-inference API contract checks. No existing application code, dependencies, secrets, or runtime configuration values were modified.
 
 ## 1. Executive summary
 
-This is a compact browser-to-FastAPI speech application, not yet a platform. It has a real, functioning implementation of microphone capture, 5-second *file-chunk* uploads, multilingual Whisper transcription with per-chunk language detection, VAD filtering, and server-side Edge TTS playback. It has no persistence, authentication, translation, WebSocket protocol, task queue, streaming ASR, automated tests, CI, deployment definition beyond a backend Dockerfile, or operational observability.
+This is a compact browser-to-FastAPI multilingual STT/TTS application, not yet a platform. It has a real, functioning implementation of microphone capture, 5-second *file-chunk* uploads, multilingual Whisper transcription with per-chunk language detection, VAD filtering, and server-side Edge TTS playback. It has no persistence, authentication, translation, WebSocket protocol, task queue, streaming ASR, automated tests, CI, deployment definition beyond a backend Dockerfile, or operational observability.
 
 The strongest implemented idea is appropriate for a portfolio MVP: `faster-whisper` is loaded once per process (`get_model()` cache), while blocking inference is moved out of FastAPI's event loop. The main limitation is intentional serialization through `_transcribe_lock`; this protects a local model but gives one transcription at a time per process. Combined with independent 5-second recordings and unordered response appends, the current UI is near-real-time *batch chunking*, not real-time streaming and cannot guarantee a coherent continuous transcript.
 

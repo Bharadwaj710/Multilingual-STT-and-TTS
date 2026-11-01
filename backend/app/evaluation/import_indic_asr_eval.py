@@ -25,12 +25,12 @@ API_ENDPOINT = "https://huggingface.co/api/datasets/ayush-shunyalabs/Indic_ASR_E
 
 
 def _json_get(url: str) -> dict:
-    with urlopen(Request(url, headers={"User-Agent": "pelocal-evaluation-importer"}), timeout=60) as response:
+    with urlopen(Request(url, headers={"User-Agent": "multilingual-evaluation-importer"}), timeout=60) as response:
         return json.load(response)
 
 
 def _download(url: str) -> bytes:
-    with urlopen(Request(url, headers={"User-Agent": "pelocal-evaluation-importer"}), timeout=120) as response:
+    with urlopen(Request(url, headers={"User-Agent": "multilingual-evaluation-importer"}), timeout=120) as response:
         return response.read()
 
 

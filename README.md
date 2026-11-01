@@ -1,6 +1,6 @@
-# Pelocal Multilingual Speech AI
+# Multilingual Speech STT/TTS
 
-A self-hostable multilingual speech API with a React web interface. The
+A self-hostable multilingual STT/TTS API with a React web interface. The
 backend accepts short audio uploads or browser-recorded chunks, transcribes
 them with faster-whisper, and can generate MP3 speech through Edge TTS.
 
@@ -79,7 +79,7 @@ when the backend is running.
 Returns service information:
 
 ```json
-{"message":"Pelocal Speech AI API is running."}
+{"message":"Multilingual Speech API is running."}
 ```
 
 ### `GET /health`
@@ -131,7 +131,7 @@ Send JSON text and an allow-listed voice:
 ```bash
 curl -X POST http://localhost:8000/api/speak \
   -H "Content-Type: application/json" \
-  -d "{\"text\":\"Hello from Pelocal\",\"voice\":\"en-US-AvaNeural\"}" \
+  -d "{\"text\":\"Hello from the multilingual speech API\",\"voice\":\"en-US-AvaNeural\"}" \
   --output speech.mp3
 ```
 
@@ -185,7 +185,7 @@ curl http://localhost:8000/ready
 ```
 
 The backend runs as a non-root `appuser`. Model files are stored in the named
-`pelocal-whisper-model-cache` volume. The frontend waits for the backend
+`multilingual-whisper-model-cache` volume. The frontend waits for the backend
 healthcheck before starting. `docker compose down` stops containers but
 preserves the named model cache; remove that volume only when you intentionally
 want to redownload model files.

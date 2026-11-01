@@ -1,3 +1,5 @@
+name: multilingual-stt-tts
+
 services:
   backend:
     build:
@@ -12,7 +14,7 @@ services:
       WHISPER_COMPUTE_TYPE: ${WHISPER_COMPUTE_TYPE:-int8}
       MAX_ADMITTED_INFERENCE_REQUESTS: ${MAX_ADMITTED_INFERENCE_REQUESTS:-2}
       MAX_UPLOAD_SIZE_BYTES: ${MAX_UPLOAD_SIZE_BYTES:-15728640}
-      TEMP_DIRECTORY: /tmp/pelocal-speech-api
+      TEMP_DIRECTORY: /tmp/multilingual-speech-api
       HF_HOME: /opt/model-cache
       HF_HUB_CACHE: /opt/model-cache/hub
       XDG_CACHE_HOME: /opt/model-cache
@@ -43,4 +45,4 @@ services:
 
 volumes:
   whisper-model-cache:
-    name: pelocal-whisper-model-cache
+    name: multilingual-whisper-model-cache

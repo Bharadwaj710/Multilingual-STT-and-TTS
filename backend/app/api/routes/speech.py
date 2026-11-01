@@ -14,7 +14,7 @@ from app.services.text_to_speech import synthesize_speech, validate_tts_request
 from app.utils.file_handling import create_temporary_file, remove_file
 
 router = APIRouter(tags=["speech"])
-logger = logging.getLogger("pelocal.stt.tts")
+logger = logging.getLogger("multilingual.stt.tts")
 
 
 @router.post(
