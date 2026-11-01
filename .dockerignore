@@ -1,0 +1,11 @@
+.git
+.github
+backend/.venv
+backend/.pytest_cache
+backend/.pytest-temp*
+backend/.test-temp
+backend/.tmp
+frontend/node_modules
+frontend/dist
+**/.env
+**/*.log

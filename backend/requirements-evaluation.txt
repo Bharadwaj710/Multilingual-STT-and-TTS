@@ -1,0 +1,3 @@
+# Optional tooling for authenticated public-dataset imports.
+# Keep separate from production and test dependencies.
+datasets>=3.0,<5

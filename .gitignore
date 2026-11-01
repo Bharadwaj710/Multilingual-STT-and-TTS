@@ -4,4 +4,39 @@ __pycache__/
 node_modules/
 dist/
 .env
+.env.*
+!.env.example
 .DS_Store
+
+# Test and local runtime artifacts
+.pytest_cache/
+.pytest-temp*/
+*.log
+.tmp/
+backend/.tmp/
+backend/tts-test.mp3
+test-speech.mp3
+
+# Model and Hugging Face caches
+model-cache/
+hf-cache/
+.cache/
+
+# Audio recordings and generated media
+*.wav
+*.mp3
+*.webm
+*.m4a
+*.ogg
+*.aac
+*.flac
+*.mp4
+
+# Private/local evaluation data and generated benchmark results
+evaluation/dataset/audio/*
+!evaluation/dataset/audio/.gitkeep
+!evaluation/dataset/audio/.gitignore
+evaluation/dataset/manifests/*
+!evaluation/dataset/manifests/manifest.template.json
+evaluation/dataset/results/*
+!evaluation/dataset/results/.gitkeep

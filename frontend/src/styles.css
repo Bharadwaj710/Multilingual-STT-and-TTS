@@ -157,6 +157,68 @@ h1 {
   padding: 1.25rem;
 }
 
+.history-panel {
+  grid-column: 1 / -1;
+  min-height: auto;
+}
+
+.local-storage-note {
+  color: #6d7168;
+  font-size: 0.8rem;
+  margin: 0.35rem 0 0;
+}
+
+.history-columns {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.history-columns h3 {
+  color: #5e6259;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.history-card {
+  background: #fffaf0;
+  border: 1px solid rgba(29, 33, 27, 0.1);
+  border-radius: 18px;
+  display: grid;
+  gap: 0.65rem;
+  margin-bottom: 0.8rem;
+  padding: 1rem;
+}
+
+.history-card p {
+  line-height: 1.5;
+  margin: 0;
+}
+
+.history-card small {
+  color: #6d7168;
+}
+
+.history-card-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.compact-button {
+  font-size: 0.8rem;
+  justify-self: start;
+  padding: 0.55rem 0.8rem;
+}
+
+.text-button {
+  background: transparent;
+  color: #9c281d;
+  font-size: 0.78rem;
+  padding: 0.2rem;
+}
+
 .panel-header {
   align-items: center;
   display: flex;
@@ -294,5 +356,13 @@ h1 {
   .page-shell {
     grid-template-columns: 1fr;
     padding-top: 1rem;
+  }
+
+  .history-panel {
+    grid-column: auto;
+  }
+
+  .history-columns {
+    grid-template-columns: 1fr;
   }
 }

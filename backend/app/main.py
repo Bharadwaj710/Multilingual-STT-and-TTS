@@ -1,31 +1,32 @@
+"""FastAPI application assembly for the self-hostable Speech AI API."""
+
+from __future__ import annotations
+
 import logging
-import os
-import shutil
-import tempfile
-from pathlib import Path
+import json
+from time import perf_counter
 from uuid import uuid4
 
-import edge_tts
-from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from starlette.concurrency import run_in_threadpool
+from fastapi.responses import JSONResponse, Response
 
-from app.config import settings
-from app.transcriber import transcribe_audio_file, warmup_model
+from app.api.routes import health, speech, transcription
+from app.core.config import settings
+from app.core.errors import AppError
+from app.core.logging import configure_logging
 
+configure_logging()
 logger = logging.getLogger("pelocal.stt")
 
-class TTSRequest(BaseModel):
-    text: str
-    voice: str = "en-US-AvaNeural"
-
-
 app = FastAPI(
-    title="Speech-to-Text API",
+    title="Speech AI API",
     version="1.0.0",
-    description="Chunk-based multilingual transcription using an open-source Whisper model.",
+    description=(
+        "Chunk-based multilingual transcription using faster-whisper and "
+        "text-to-speech generation through a configured Edge TTS voice."
+    ),
 )
 
 app.add_middleware(
@@ -34,97 +35,99 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Request-ID"],
 )
 
 
-@app.get("/")
-def read_root():
-    return {"message": "Pelocal STT Backend is running on Hugging Face Spaces!"}
+def _request_id(request: Request) -> str:
+    return getattr(request.state, "request_id", "unknown")
 
 
-@app.get("/health")
-def health() -> dict:
-    return {"status": "ok"}
+def _error_body(code: str, message: str, request: Request) -> dict:
+    # Preserve `detail` for the existing React client's error extraction while
+    # giving API consumers a stable machine-readable error shape.
+    return {
+        "detail": message,
+        "error": {"code": code, "message": message, "request_id": _request_id(request)},
+    }
 
 
-@app.post("/api/model/warmup")
-def warmup() -> dict:
+@app.middleware("http")
+async def request_context_and_logging(request: Request, call_next) -> Response:
+    """Attach a safe request identifier and emit one structured completion log."""
+    request_id = uuid4().hex
+    request.state.request_id = request_id
+    started_at = perf_counter()
+    status_code = 500
     try:
-        return warmup_model()
-    except Exception as exc:
-        raise HTTPException(status_code=503, detail=f"Model warmup failed: {exc}") from exc
-
-
-@app.post("/api/transcribe")
-async def transcribe(
-    audio: UploadFile = File(...),
-    language: str | None = Form(default=None),
-) -> dict:
-    if not audio.content_type or not audio.content_type.startswith("audio/"):
-        raise HTTPException(status_code=400, detail="Upload must be an audio file.")
-
-    suffix = Path(audio.filename or "audio.webm").suffix or ".webm"
-    temp_dir = Path(tempfile.gettempdir()) / "pelocal-stt"
-    temp_dir.mkdir(parents=True, exist_ok=True)
-    temp_path = temp_dir / f"{uuid4().hex}{suffix}"
-
-    try:
-        with temp_path.open("wb") as buffer:
-            shutil.copyfileobj(audio.file, buffer)
-
-        file_size = temp_path.stat().st_size
-        if file_size < 1000:
-            return {
-                "text": "",
-                "language": None,
-                "language_probability": 0,
-                "duration": 0,
-                "skipped": "audio chunk too small",
-            }
-
-        logger.info(
-            "Transcribing upload filename=%s content_type=%s size=%s",
-            audio.filename,
-            audio.content_type,
-            file_size,
-        )
-        result = await run_in_threadpool(transcribe_audio_file, temp_path, language)
-        return result
-    except Exception as exc:
-        logger.exception(
-            "Transcription failed for filename=%s content_type=%s temp_path=%s",
-            audio.filename,
-            audio.content_type,
-            temp_path,
-        )
-        raise HTTPException(status_code=500, detail=f"Transcription failed: {exc}") from exc
+        response = await call_next(request)
+        status_code = response.status_code
+        response.headers["X-Request-ID"] = request_id
+        return response
     finally:
-        temp_path.unlink(missing_ok=True)
-
-
-@app.post("/api/speak")
-async def speak(request: TTSRequest, background_tasks: BackgroundTasks):
-    if not request.text.strip():
-        raise HTTPException(status_code=400, detail="Text cannot be empty")
-        
-    temp_dir = Path(tempfile.gettempdir()) / "pelocal-tts"
-    temp_dir.mkdir(parents=True, exist_ok=True)
-    temp_path = temp_dir / f"{uuid4().hex}.mp3"
-    
-    try:
-        communicate = edge_tts.Communicate(request.text, request.voice)
-        await communicate.save(str(temp_path))
-        
-        # safely delete file after sending
-        background_tasks.add_task(os.remove, str(temp_path))
-        
-        return FileResponse(
-            path=temp_path,
-            media_type="audio/mpeg",
-            filename="tts_output.mp3"
+        logger.info(
+            "request_complete %s",
+            json.dumps(
+                {
+                    "event": "request_complete",
+                    "request_id": request_id,
+                    "method": request.method,
+                    "path": request.url.path,
+                    "status_code": status_code,
+                    "duration_ms": round((perf_counter() - started_at) * 1000, 2),
+                },
+                separators=(",", ":"),
+            ),
         )
-    except Exception as exc:
-        logger.exception("TTS generation failed")
-        if temp_path.exists():
-            temp_path.unlink(missing_ok=True)
-        raise HTTPException(status_code=500, detail=f"TTS failed: {exc}") from exc
+
+
+@app.exception_handler(AppError)
+async def app_error_handler(_request: Request, exc: AppError) -> JSONResponse:
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=_error_body(exc.code, exc.message, _request),
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def request_validation_error_handler(
+    _request: Request, _exc: RequestValidationError
+) -> JSONResponse:
+    validation_details = [
+        {
+            "location": ".".join(str(part) for part in error.get("loc", ())),
+            "type": error.get("type", "unknown"),
+        }
+        for error in _exc.errors()
+    ]
+    logger.warning(
+        "request_validation_failed %s",
+        json.dumps(
+            {
+                "event": "request_validation_failed",
+                "request_id": _request_id(_request),
+                "method": _request.method,
+                "path": _request.url.path,
+                "details": validation_details,
+            },
+            separators=(",", ":"),
+        ),
+    )
+    return JSONResponse(
+        status_code=422,
+        content=_error_body("INVALID_REQUEST", "The request payload is invalid.", _request),
+    )
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(_request: Request, _exc: Exception) -> JSONResponse:
+    logger.exception("Unhandled application error")
+    return JSONResponse(
+        status_code=500,
+        content=_error_body("INTERNAL_ERROR", "An unexpected server error occurred.", _request),
+    )
+
+
+app.include_router(health.router)
+app.include_router(transcription.router)
+app.include_router(speech.router)
